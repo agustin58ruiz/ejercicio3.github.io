@@ -400,25 +400,50 @@
             *********************************************************************************
             */
 
+            distanciaTierraSol = 60;
+            distanciaTierraLuna = 30;
+            distanciaSateliteTierra = 10;
+            distanciaApolloLuna= 2;
+            inclunacionApolloZ = -45*2*Math.PI/360;
+            inclinacionTierraZ = -23*2*Math.PI/360;
+            inclinacionSateliteY = 90*2*Math.PI/360;
+            velocidadAngularRotacionSatelite = 2*Math.PI/0.1;
+        
+            velocidadAngularRotacionLuna = 2*Math.PI/5;
+            velocidadAngularRotacionTierra = -2*Math.PI / 5;
+            velocidadAngularTraslacionTierra = 2*Math.PI / 10;
+            console.log(inclinacionTierraZ);
+            // nodoA
+            m1=mat4.create();
+            mat4.rotate(m1,m1,tiempo*velocidadAngularTraslacionTierra, vec3.fromValues(0,1,0));
+            mat4.translate(m1,m1,[distanciaTierraSol,0,0]);
+
             // tierra
-            m1=mat4.create(); 
-            mat4.translate(m1,m1,[60,0,0]);    
-            setTransform(tierra,m1);
+            m2= mat4.create(); 
+            mat4.rotate(m2,m1, -tiempo*velocidadAngularTraslacionTierra,vec3.fromValues(0, 1,0));
+            mat4.rotate(m2, m2, inclinacionTierraZ, vec3.fromValues(0,0,1)); // inclinar -23
+            mat4.rotate(m2, m2, tiempo*velocidadAngularRotacionTierra, vec3.fromValues(0,1,0));
+            setTransform(tierra,m2);
   
             // luna
-            m2=mat4.create();      
-            mat4.translate(m2,m2,[90,0,0]);    
-            setTransform(luna,m2);  
+            m3=mat4.create();   
+            mat4.rotate(m3,m1, tiempo*velocidadAngularRotacionLuna,vec3.fromValues(0,1,0));
+            mat4.translate(m3,m3,vec3.fromValues(distanciaTierraLuna,0,0));   
+               
 
-            // apollo
-            m3=mat4.create();
-            mat4.translate(m3,m3,[110,0,0]); 
-            setTransform(apollo,m3);    
-
+            setTransform(luna,m3);  
             // iss
             m4=mat4.create(); 
-            mat4.translate(m4,m4,[130,0,0]);            
+            mat4.rotate(m4,m1,tiempo*velocidadAngularRotacionSatelite, vec3.fromValues(0,0,1));
+            mat4.translate(m4,m4,[distanciaSateliteTierra,0,0]);
+            mat4.rotate(m4,m4,inclinacionSateliteY, vec3.fromValues(0,1,0));
+            
             setTransform(iss,m4);  
+            // apollo
+            m5=mat4.create();
+            mat4.rotate(m5,m3,inclunacionApolloZ ,vec3.fromValues(0,0,1));
+            mat4.translate(m5,m5,vec3.fromValues(0,distanciaApolloLuna,0)); 
+            setTransform(apollo,m5);   
 
 
             // *********************************************************************************************
